@@ -11,11 +11,13 @@ using System.Linq;
 using Newtonsoft.Json;
 using NJsonSchema;
 using NSwag.Collections;
+using System;
 
 namespace NSwag
 {
     /// <summary>Container for reusable components (OpenAPI only).</summary>
-    public class OpenApiComponents
+    // [JsonConverter(typeof(OpenApiComponentsConverter))]
+    public class OpenApiComponents : JsonExtensionObject
     {
         /// <summary></summary>
         /// <param name="document"></param>
@@ -127,5 +129,100 @@ namespace NSwag
         /// <summary>Gets or sets the security definitions.</summary>
         [JsonProperty(PropertyName = "callbacks", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public IDictionary<string, OpenApiCallback> Callbacks { get; }
+
+        /*
+        /// <summary>Gets or sets the extension data (i.e. additional properties which are not directly defined by the JSON object).</summary>
+        [JsonExtensionData]
+        public IDictionary<string, object> ExtensionData { get; set; }
+
+        internal class OpenApiComponentsConverter : JsonConverter
+        {
+            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+            {
+                var components = (OpenApiComponents)value;
+                writer.WriteStartObject();
+
+                if (components.Schemas != null && components.Schemas.Any())
+                {
+                    writer.WritePropertyName("schemas");
+                    serializer.Serialize(writer, components.Schemas);
+                }
+
+                if (components.RequestBodies != null && components.RequestBodies.Any())
+                {
+                    writer.WritePropertyName("requestBodies");
+                    serializer.Serialize(writer, components.RequestBodies);
+                }
+
+                if (components.Responses != null && components.Responses.Any())
+                {
+                    writer.WritePropertyName("responses");
+                    serializer.Serialize(writer, components.Responses);
+                }
+
+                if (components.Parameters != null && components.Parameters.Any())
+                {
+                    writer.WritePropertyName("parameters");
+                    serializer.Serialize(writer, components.Parameters);
+                }
+
+                if (components.Examples != null && components.Examples.Any())
+                {
+                    writer.WritePropertyName("examples");
+                    serializer.Serialize(writer, components.Examples);
+                }
+
+                if (components.Headers != null && components.Headers.Any())
+                {
+                    writer.WritePropertyName("headers");
+                    serializer.Serialize(writer, components.Headers);
+                }
+
+                if (components.SecuritySchemes != null && components.SecuritySchemes.Any())
+                {
+                    writer.WritePropertyName("securitySchemes");
+                    serializer.Serialize(writer, components.SecuritySchemes);
+                }
+
+                if (components.Links != null && components.Links.Any())
+                {
+                    writer.WritePropertyName("links");
+                    serializer.Serialize(writer, components.Links);
+                }
+
+                if (components.Callbacks != null && components.Callbacks.Any())
+                {
+                    writer.WritePropertyName("callbacks");
+                    serializer.Serialize(writer, components.Callbacks);
+                }
+
+                if (components.ExtensionData != null)
+                {
+                    foreach (var tuple in components.ExtensionData)
+                    {
+                        writer.WritePropertyName(tuple.Key);
+                        serializer.Serialize(writer, tuple.Value);
+                    }
+                }
+
+                writer.WriteEndObject();
+            }
+
+            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+            {
+                if (reader.TokenType == JsonToken.Null)
+                {
+                    return null;
+                }
+
+                var components = new OpenApiComponents();
+            }
+
+            public override bool CanConvert(Type objectType)
+            {
+                return objectType == typeof(OpenApiComponents);
+            }
+        }
+        */
     }
 }
